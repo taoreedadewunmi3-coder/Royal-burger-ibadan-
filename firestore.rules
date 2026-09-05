@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /orders/{orderId} {
+      allow create: if request.auth != null || request.resource.data.customer.email is string;
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
